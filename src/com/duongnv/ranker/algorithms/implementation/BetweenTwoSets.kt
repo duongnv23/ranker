@@ -1,7 +1,6 @@
 package com.duongnv.ranker.algorithms.implementation
 
 import java.lang.IllegalArgumentException
-import java.math.BigInteger
 import kotlin.collections.*
 import kotlin.io.*
 import kotlin.text.*
@@ -18,7 +17,6 @@ import kotlin.text.*
 fun getTotalX(a: Array<Int>, b: Array<Int>): Int {
     // Write your code here
 
-TODO("still has error")
     if (a.any { it < 1 || it > 100 }) throw IllegalArgumentException("a's element must be in range [1..100]")
     if (b.any { it < 1 || it > 100 }) throw IllegalArgumentException("b's element must be in range [1..100]")
 
@@ -27,46 +25,35 @@ TODO("still has error")
     b.sort()
     val bMin = b[0]
 
-    val aLcm = lcm(a)
+    if (aMax > bMin) return 0
 
-    val candidates = ArrayList<Int>()
-    val num = ArrayList<Int>()
-
-    for (i in aMax until  bMin) {
-        if (i % aLcm == 0) candidates.add(i)
-    }
-
-    var count = 0
-    for (i in candidates) {
-        count = 0
-        for (j in b) {
-            if (j % i == 0) count++
+    val nums = ArrayList<Int>()
+    var pass: Boolean
+    for (i in aMax..bMin) {
+        pass = true
+        for (j in a) {
+            if (i % j != 0) {
+                pass = false
+                break
+            }
         }
-        if (count == b.size)
-            num.add(i)
+
+        if (!pass) {
+            continue
+        }
+
+        for (j in b) {
+            if (j % i !== 0) {
+                pass = false
+                break
+            }
+        }
+        if (pass) {
+            nums.add(i)
+        }
     }
 
-    return num.size
-}
-
-fun gcd(a: Int, b: Int): Int {
-    return a.toBigInteger().gcd(b.toBigInteger()).intValueExact()
-}
-
-fun gcd(a: Array<Int>): Int {
-    var result = a[0]
-
-    for (i in a) {
-        result = gcd(i, result)
-    }
-    return result
-}
-
-fun lcm(a: Array<Int>): Int {
-    var mul: Long = 1
-    a.forEach { mul *= it }
-    return (mul / gcd(a)).toInt()
-
+    return nums.size
 }
 
 fun main(args: Array<String>) {
